@@ -43,9 +43,19 @@ namespace crc64
       auto suffix = (length - offset) & MASK;
       auto middle = length - offset - suffix;
       const auto* ptr = reinterpret_cast<const uint8_t*>(src);
-      state = update_table(state, ptr, offset);
-      state = func(state, ptr + offset, middle);
-      state = update_table(state, ptr + offset + middle, suffix);
+      if constexpr (ALIGN > 128)
+      {
+        state = update_fast<128>(update_simd, state, ptr, offset);
+        state = func(state, ptr + offset, middle);
+        state =
+          update_fast<128>(update_simd, state, ptr + offset + middle, suffix);
+      }
+      else
+      {
+        state = update_table(state, ptr, offset);
+        state = func(state, ptr + offset, middle);
+        state = update_table(state, ptr + offset + middle, suffix);
+      }
       return state;
     }
 

@@ -28,12 +28,10 @@ namespace crc64
         return state;
 
       const auto* ptr =
-        reinterpret_cast<const avx512_t*>(__builtin_assume_aligned(src, 128));
+        reinterpret_cast<const avx512_t*>(__builtin_assume_aligned(src, 512));
 
       auto load_slice = [](const avx512_t* address) -> Slice<2> {
-        return {_mm512_load_si512(address),
-                _mm512_load_si512(address + 1)
-        };
+        return {_mm512_load_si512(address), _mm512_load_si512(address + 1)};
       };
 
       auto x = load_slice(ptr);
@@ -58,13 +56,46 @@ namespace crc64
         return _mm512_xor_si512(h, l);
       };
 
-      for (size_t i = 128; i < length; i += 128, ptr += 2)
+      for (size_t i = 0; i < 3; i += 1, ptr += 2)
       {
         auto chunk = load_slice(ptr);
         for (size_t j = 0; j < 2; ++j)
         {
           auto folded = fold(x[j], coeff);
           x[j] = _mm512_xor_si512(chunk[j], folded);
+        }
+      }
+
+      for (size_t i = 512; i < length; i += 512, ptr += 8)
+      {
+        Slice<2> chunk[4] = {
+          load_slice(ptr + 0),
+          load_slice(ptr + 2),
+          load_slice(ptr + 4),
+          load_slice(ptr + 6)};
+        {
+          auto folded0 = fold(x[0], coeff);
+          x[0] = _mm512_xor_si512(chunk[0][0], folded0);
+          auto folded1 = fold(x[1], coeff);
+          x[1] = _mm512_xor_si512(chunk[0][1], folded1);
+        }
+        {
+          auto folded0 = fold(x[0], coeff);
+          x[0] = _mm512_xor_si512(chunk[1][0], folded0);
+          auto folded1 = fold(x[1], coeff);
+          x[1] = _mm512_xor_si512(chunk[1][1], folded1);
+        }
+        {
+          auto folded0 = fold(x[0], coeff);
+          x[0] = _mm512_xor_si512(chunk[2][0], folded0);
+          auto folded1 = fold(x[1], coeff);
+          x[1] = _mm512_xor_si512(chunk[2][1], folded1);
+        }
+        {
+          auto folded0 = fold(x[0], coeff);
+          x[0] = _mm512_xor_si512(chunk[3][0], folded0);
+          auto folded1 = fold(x[1], coeff);
+          x[1] = _mm512_xor_si512(chunk[3][1], folded1);
         }
       }
 

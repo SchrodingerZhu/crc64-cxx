@@ -20,7 +20,7 @@ extern "C"
     if (enable_simd && crc64::VPCLMULQDQ_CRC64_SUPPORT)
     {
       result.update_fn = [](uint64_t _state, const void* _src, size_t _length) {
-        return crc64::detail::update_fast(
+        return crc64::detail::update_fast<512>(
           crc64::detail::update_vpclmulqdq, _state, _src, _length);
       };
     }
