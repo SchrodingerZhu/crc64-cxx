@@ -18,9 +18,10 @@ if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)")
     add_library(crc64-x86 STATIC src/simd.cpp)
     target_compile_options(crc64-x86 PRIVATE -msse2 -msse4.1 -mpclmul)
     target_link_libraries(crc64 INTERFACE crc64-x86 cpu_features)
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "(arm64)|(ARM64)|(aarch64)|(AARCH64)")
+    add_library(crc64-aarch64 STATIC src/simd.cpp)
+    target_compile_options(crc64-aarch64 PRIVATE -march=armv8-a+simd+fp+crypto)
+    target_link_libraries(crc64 INTERFACE crc64-aarch64 cpu_features)
 endif()
-
-
-
 
 target_link_libraries(crc64_run crc64)

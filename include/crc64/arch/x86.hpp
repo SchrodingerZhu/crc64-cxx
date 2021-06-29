@@ -35,7 +35,6 @@ namespace crc64 {
 
         bool operator==(const SIMD& that) const noexcept;
 
-    private:
         detail::simd_t _inner {};
 
         explicit SIMD(detail::simd_t _inner) noexcept;

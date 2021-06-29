@@ -11,7 +11,9 @@
 #include <cstring>
 
 namespace crc64 {
-
+    namespace detail {
+        using simd_t = uint8x16_t;
+    }
     class SIMD {
     public:
 
@@ -31,8 +33,12 @@ namespace crc64 {
 
         SIMD operator^(const SIMD& that) const noexcept;
 
-    private:
         detail::simd_t _inner {};
+
+        explicit SIMD(detail::simd_t _inner) noexcept;
+
+        bool operator==(const SIMD &that) const noexcept;
+
     };
 
     namespace detail {
@@ -69,18 +75,25 @@ namespace crc64 {
         return SIMD{veorq_u8(_inner, that._inner)};
     }
 
-    inline SIMD::fold8(uint64_t coeff) const noexcept {
-        auto [x0, x1] = detail::into_poly64pair(*this)
+    inline SIMD SIMD::fold8(uint64_t coeff) const noexcept {
+        auto [x0, x1] = detail::into_poly64pair(*this);
         auto h        = detail::from_mul(static_cast<poly64_t>(coeff), x0);
         auto l        = SIMD{0, static_cast<uint64_t>(x1)};
         return h.bitxor(l);
     }
 
     inline SIMD SIMD::fold16(SIMD coeff) const noexcept {
-        auto [x0, x1] = detail::into_poly64pair(*this);
-        auto [c0, c1] = detail::into_poly64pair(coeff);
-        auto h = detail::from_mul(c0, x0);
-        auto l = detail::from_mul(c1, x1);
+//        auto [x0, x1] = detail::into_poly64pair(*this);
+//        auto [c0, c1] = detail::into_poly64pair(coeff);
+//        auto h = detail::from_mul(c0, x0);
+//        auto l = detail::from_mul(c1, x1);
+        SIMD h(0, 0), l(0, 0);
+        asm(
+                "pmull %0.1q, %2.1d, %3.1d\n"
+                "pmull2 %1.1q, %2.2d, %3.2d"
+        : "=&w"(l._inner), "=w"(h._inner)
+        : "w"(this->_inner), "w"(coeff._inner)
+        );
         return h.bitxor(l);
     }
 
