@@ -27,8 +27,8 @@ namespace {
         cpu_features::GetAarch64Info().features;
 }
 
-const bool FAST_CRC64_SUPPORT = detail::_features.pmull
-        && detail::_features.asimd;
+const bool crc64::FAST_CRC64_SUPPORT = _features.pmull
+        && _features.asimd;
 
 #endif
 
