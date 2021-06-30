@@ -33,7 +33,7 @@ static void benchmark_crc64_long_simd(benchmark::State &state) {
     auto eng = std::mt19937_64{dev()};
     auto dist = std::uniform_int_distribution<char>{};
     auto d = crc64::Digest{true};
-    std::vector<char> data(1 * 1024 * 1024 * 1024);
+    std::vector<char> data(4 * 1024 * 1024);
     for (auto &i : data) {
         i = dist(eng);
     }
@@ -42,7 +42,7 @@ static void benchmark_crc64_long_simd(benchmark::State &state) {
         benchmark::DoNotOptimize(d.checksum());
     }
     state.SetBytesProcessed(
-            1 * 1024 * 1024 * 1024 * static_cast<int64_t>(state.iterations()));
+            4 * 1024 * 1024 * static_cast<int64_t>(state.iterations()));
 }
 
 static void benchmark_crc64_long_table(benchmark::State &state) {
@@ -50,7 +50,7 @@ static void benchmark_crc64_long_table(benchmark::State &state) {
     auto eng = std::mt19937_64{dev()};
     auto dist = std::uniform_int_distribution<char>{};
     auto d = crc64::Digest{false};
-    std::vector<char> data(1 * 1024 * 1024 * 1024);
+    std::vector<char> data(4 * 1024 * 1024);
     for (auto &i : data) {
         i = dist(eng);
     }
@@ -60,7 +60,7 @@ static void benchmark_crc64_long_table(benchmark::State &state) {
     }
 
     state.SetBytesProcessed(
-            1 * 1024 * 1024 * 1024 * static_cast<int64_t>(state.iterations()));
+            4 * 1024 * 1024 * static_cast<int64_t>(state.iterations()));
 }
 
 // Register the function as a benchmark
