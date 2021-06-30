@@ -66,7 +66,7 @@ namespace crc64 {
     inline uint64_t SIMD::barrett(uint64_t poly, uint64_t mu) const noexcept {
         auto polymu  = SIMD { poly, mu };
         auto t1      = _mm_clmulepi64_si128(_inner, polymu._inner, 0x00);
-        auto h       = SIMD {_mm_slli_si128(t1, 0) };
+        auto h       = SIMD {_mm_slli_si128(t1, 8) };
         auto l       = SIMD {_mm_clmulepi64_si128(t1, polymu._inner, 0x10) };
         auto reduced = h.bitxor(l).bitxor(*this);
         return static_cast<uint64_t>(_mm_extract_epi64(reduced._inner, 1));
