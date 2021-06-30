@@ -3,8 +3,7 @@ project(crc64)
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(BUILD_PIC ON CACHE BOOL "enable X functionality" FORCE)
-set(CMAKE_CXX_FLAGS "-march=native")
+set(BUILD_PIC ON CACHE BOOL "Needed to require CPU feature PIC build" FORCE)
 add_subdirectory(cpu_features)
 include_directories(cpu_features/include)
 include_directories(include)
