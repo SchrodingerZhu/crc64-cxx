@@ -85,7 +85,7 @@ namespace crc64 {
 
     inline uint64_t SIMD::barrett(uint64_t poly, uint64_t mu) const noexcept {
         auto t1 = SIMD::from_mul(low64(), static_cast<poly64_t>(mu)).low64();
-        auto l  = SIMD::from_mul(t1, static_cast<poly64_t>(mu));
+        auto l  = SIMD::from_mul(t1, static_cast<poly64_t>(poly));
         auto reduced = static_cast<uint64_t>(bitxor(l).high64());
         return reduced ^ static_cast<uint64_t>(t1);
     }
