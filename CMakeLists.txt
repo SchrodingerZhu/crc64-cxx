@@ -43,7 +43,8 @@ if (CRC64_ENABLE_TESTS)
     target_include_directories(crc64-test  SYSTEM PRIVATE ${GTEST_INCLUDE_DIRS})
     target_link_libraries(crc64-test ${GTEST_BOTH_LIBRARIES} Threads::Threads crc64)
     target_compile_options(crc64-test PRIVATE -march=native -fno-inline -Og -g3)
-    enable_testing(gtest crc64-test)
+    enable_testing()
+    add_test(gtest crc64-test)
 endif()
 
 
