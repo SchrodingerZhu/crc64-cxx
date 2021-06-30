@@ -17,6 +17,8 @@ namespace crc64 {
     class SIMD {
     public:
 
+        using Poly64Pair = std::pair<poly64_t, poly64_t>;
+
         SIMD(uint64_t high, uint64_t low) noexcept;
 
         SIMD fold16(SIMD coeff) const noexcept;
@@ -41,9 +43,7 @@ namespace crc64 {
 
         explicit SIMD(detail::simd_t _inner) noexcept;
 
-        using Poly64Pair = std::pair<poly64_t, poly64_t>;
-
-        static SIMD from_mul(poly64_t a, poly64_t b);
+        static SIMD from_mul(poly64_t a, poly64_t b) noexcept;
 
         Poly64Pair into_poly64pair() const noexcept;
 
@@ -114,7 +114,7 @@ namespace crc64 {
         return SIMD(vreinterpretq_u8_p128(mul));
     }
 
-    inline Poly64Pair SIMD::into_poly64pair() const noexcept {
+    inline SIMD::Poly64Pair SIMD::into_poly64pair() const noexcept {
         auto y = vreinterpretq_p64_u8(_inner);
         return {vgetq_lane_p64(y, 0), vgetq_lane_p64(y, 1)};
     }
