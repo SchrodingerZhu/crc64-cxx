@@ -69,17 +69,17 @@ namespace crc64 {
     }
 
     inline SIMD SIMD::fold16(SIMD coeff) const noexcept {
-//        auto [x0, x1] = into_poly64pair();
-//        auto [c0, c1] = coeff.into_poly64pair();
-//        auto h = SIMD::from_mul(c0, x0);
-//        auto l = SIMD::from_mul(c1, x1);
-        SIMD h(0, 0), l(0, 0);
-        asm(
-                "pmull %0.1q, %2.1d, %3.1d\n"
-                "pmull2 %1.1q, %2.2d, %3.2d"
-        : "=&w"(l._inner), "=w"(h._inner)
-        : "w"(this->_inner), "w"(coeff._inner)
-        );
+        auto [x0, x1] = into_poly64pair();
+        auto [c0, c1] = coeff.into_poly64pair();
+        auto h = SIMD::from_mul(c0, x0);
+        auto l = SIMD::from_mul(c1, x1);
+//        SIMD h(0, 0), l(0, 0);
+//        asm(
+//                "pmull %0.1q, %2.1d, %3.1d\n"
+//                "pmull2 %1.1q, %2.2d, %3.2d"
+//        : "=&w"(l._inner), "=w"(h._inner)
+//        : "w"(this->_inner), "w"(coeff._inner)
+//        );
         return h.bitxor(l);
     }
 
