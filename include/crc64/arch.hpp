@@ -19,13 +19,15 @@ namespace crc64 {
 
         static inline uint64_t update_fast(uint64_t state, const void *src, size_t length) {
 
-            static const uintptr_t MASK = 127;
+
+            static const uintptr_t ALIGN = 128;
+            static const uintptr_t MASK = ALIGN - 1;
 
             if (length == 0) return state;
 
             auto offset = (-reinterpret_cast<uintptr_t>(src)) & MASK;
 
-            if (offset > length) {
+            if (offset >= length) {
                 return update_table(state, src, length);
             }
 

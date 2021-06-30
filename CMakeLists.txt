@@ -8,8 +8,6 @@ add_subdirectory(cpu_features)
 include_directories(cpu_features/include)
 include_directories(include)
 
-
-add_executable(crc64_run main.cpp)
 add_library(crc64 INTERFACE)
 target_link_libraries(crc64 INTERFACE)
 
@@ -34,4 +32,25 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "(arm64)|(ARM64)|(aarch64)|(AARCH64)")
     target_link_libraries(crc64 INTERFACE crc64-aarch64 cpu_features)
 endif()
 
-target_link_libraries(crc64_run crc64)
+option(CRC64_ENABLE_TESTS "Enable CRC64 Tests (Require GTest)" ON)
+option(CRC64_ENABLE_BENCHES "Enable CRC64 Benchmark (Require Benchmark)" ON)
+
+if (CRC64_ENABLE_TESTS)
+    find_package(GTest REQUIRED)
+    find_package(Threads REQUIRED)
+    file(GLOB CRC64_TEST_SRC tests/*.cpp)
+    add_executable(crc64-test ${CRC64_TEST_SRC})
+    target_include_directories(crc64-test  SYSTEM PRIVATE ${GTEST_INCLUDE_DIRS})
+    target_link_libraries(crc64-test ${GTEST_BOTH_LIBRARIES} Threads::Threads crc64)
+    target_compile_options(crc64-test PRIVATE -march=native -fno-inline -Og -g3)
+    enable_testing(gtest crc64-test)
+endif()
+
+
+if (CRC64_ENABLE_BENCHES)
+    find_package(benchmark REQUIRED)
+    file(GLOB CRC64_TEST_SRC benches/*.cpp)
+    add_executable(crc64-bench ${CRC64_TEST_SRC})
+    target_compile_options(crc64-test PRIVATE -march=native)
+    target_link_libraries(crc64-bench crc64 benchmark::benchmark)
+endif()

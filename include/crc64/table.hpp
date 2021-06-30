@@ -4263,7 +4263,7 @@ namespace crc64::detail {
         for(size_t i = 0; i < prefix; ++i, ++ptr) {
             state = update1(state, *ptr);
         };
-        for(size_t i = 0; i < middle; ++i, ptr += 16) {
+        for(size_t i = 0; i < middle; i += 16, ptr += 16) {
             auto aligned = __builtin_assume_aligned(ptr, 16);
             std::array<uint8_t, 16> slice {
                 ptr[0], ptr[1], ptr[2], ptr[3],

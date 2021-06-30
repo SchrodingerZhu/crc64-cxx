@@ -60,7 +60,7 @@ namespace crc64::detail {
 
         auto coeff = SIMD{K_1023, K_1087};
 
-        for (size_t i = 8; i < length; i += 8, ptr += 8) {
+        for (size_t i = 128; i < length; i += 128, ptr += 8) {
             auto chunk = load_slice(ptr);
             for (size_t j = 0; j < 8; ++j) {
                 x[j] = chunk[j] ^ x[j].fold16(coeff);
