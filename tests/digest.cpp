@@ -5,6 +5,7 @@
 #include <gtest/gtest.h>
 #include <crc64.hpp>
 #include <vector>
+#include <random>
 
 template<class A, class B>
 using Cases = std::vector<std::pair<A, B>>;
@@ -34,5 +35,24 @@ TEST(Digest, Simple) {
         auto table = crc64::Digest(false);
         table.write(x.data(), x.size());
         ASSERT_EQ(table.checksum(), y);
+    }
+}
+
+TEST(Digest, Random) {
+    auto dev = std::random_device {};
+    auto eng = std::mt19937_64 { dev() };
+    auto dist = std::uniform_int_distribution<char> {};
+    for (auto i = 0; i < 1000; ++i) {
+        std::vector<char> data;
+        auto length = 10000 + dist(eng) % 1'0000'0000;
+        data.reserve(length);
+        for (auto t = 0; t < length; ++t) {
+            data[i] = dist(eng);
+        }
+        auto simd = crc64::Digest();
+        auto table = crc64::Digest(false);
+        simd.write(data.data(), data.size());
+        table.write(data.data(), data.size());
+        ASSERT_EQ(table.checksum(), simd.checksum());
     }
 }
