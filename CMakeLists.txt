@@ -15,12 +15,31 @@ set(CRC64_ADDITIONAL_FLAGS -funroll-loops)
 option(CRC64_ENABLE_TESTS "Enable CRC64 Tests (Require GTest)" ON)
 option(CRC64_ENABLE_BENCHES "Enable CRC64 Benchmark (Require Benchmark)" ON)
 option(CRC64_ENABLE_CAPI "Enable CRC64 CAPI" ON)
+option(CRC64_DISABLE_WERROR "Disable strict mode" OFF)
 
 if (CRC64_ENABLE_CAPI)
     set(CRC64_CAPI_SRC src/ffi.cpp)
 else()
     set(CRC64_CAPI_SRC "")
 endif ()
+
+if(NOT CRC64_DISABLE_WERROR)
+    set(CRC64_WARNING_FLAGS
+            "-Werror"
+            "-Wall"
+            "-Wextra"
+            "-Wpedantic"
+            "-Wshadow"
+            "-Wcast-align"
+            "-Wunused"
+            "-Wconversion"
+            "-Wsign-conversion"
+            "-Wnull-dereference"
+            "-Wdouble-promotion"
+            "-Wformat=2")
+else()
+    set(CRC64_WARNING_FLAGS "")
+endif()
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     set(CRC64_ADDITIONAL_FLAGS
@@ -32,12 +51,16 @@ endif()
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)")
     add_library(crc64-x86 STATIC src/simd.cpp ${CRC64_CAPI_SRC})
     target_compile_options(crc64-x86 PRIVATE
-            -msse2 -msse4.1 -mpclmul ${CRC64_ADDITIONAL_FLAGS})
+            -msse2 -msse4.1 -mpclmul
+            ${CRC64_ADDITIONAL_FLAGS}
+            ${CRC64_WARNING_FLAGS})
     target_link_libraries(crc64 INTERFACE crc64-x86 cpu_features)
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "(arm64)|(ARM64)|(aarch64)|(AARCH64)")
     add_library(crc64-aarch64 STATIC src/simd.cpp ${CRC64_CAPI_SRC})
     target_compile_options(crc64-aarch64 PRIVATE
-            -march=armv8-a+simd+fp+crypto ${CRC64_ADDITIONAL_FLAGS})
+            -march=armv8-a+simd+fp+crypto
+            ${CRC64_ADDITIONAL_FLAGS}
+            ${CRC64_WARNING_FLAGS})
     target_link_libraries(crc64 INTERFACE crc64-aarch64 cpu_features)
 endif()
 
