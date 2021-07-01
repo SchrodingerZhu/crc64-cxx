@@ -11,11 +11,13 @@ include_directories(include)
 add_library(crc64 INTERFACE)
 target_link_libraries(crc64 INTERFACE)
 
-set(CRC64_ADDITIONAL_FLAGS -funroll-loops)
 option(CRC64_ENABLE_TESTS "Enable CRC64 Tests (Require GTest)" ON)
 option(CRC64_ENABLE_BENCHES "Enable CRC64 Benchmark (Require Benchmark)" ON)
 option(CRC64_ENABLE_CAPI "Enable CRC64 CAPI" ON)
 option(CRC64_DISABLE_WERROR "Disable strict mode" OFF)
+# Premature optimization is the root of all evil -- Donald Knuth
+option(CRC64_ENABLE_UNROLL "Enable stronger unrolling" OFF)
+
 
 if (CRC64_ENABLE_CAPI)
     set(CRC64_CAPI_SRC src/ffi.cpp)
@@ -41,11 +43,16 @@ else()
     set(CRC64_WARNING_FLAGS "")
 endif()
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    set(CRC64_ADDITIONAL_FLAGS
-            ${CRC64_ADDITIONAL_FLAGS}
-            -fprefetch-loop-arrays
-            -fvariable-expansion-in-unroller)
+if (CRC64_ENABLE_UNROLL)
+    set(CRC64_ADDITIONAL_FLAGS -funroll-loops)
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        set(CRC64_ADDITIONAL_FLAGS
+                ${CRC64_ADDITIONAL_FLAGS}
+                -fprefetch-loop-arrays
+                -fvariable-expansion-in-unroller)
+    endif()
+else()
+    set(CRC64_ADDITIONAL_FLAGS "")
 endif()
 
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)")
