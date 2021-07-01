@@ -5,7 +5,7 @@ SIMD CRC64 for C++
 
 ### GCC-11 (x86_64)
 ```
-2021-06-30T15:35:11+08:00
+2021-07-01T10:28:14+08:00
 Running ./crc64-bench
 Run on (12 X 4400 MHz CPU s)
 CPU Caches:
@@ -13,21 +13,23 @@ CPU Caches:
   L1 Instruction 32 KiB (x6)
   L2 Unified 256 KiB (x6)
   L3 Unified 12288 KiB (x1)
-Load Average: 0.78, 0.88, 0.73
+Load Average: 0.53, 0.69, 0.54
 ***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
---------------------------------------------------------------------------------------
-Benchmark                            Time             CPU   Iterations UserCounters...
---------------------------------------------------------------------------------------
-benchmark_crc64_fixed_simd        78.2 ns         78.2 ns      8873243 bytes_per_second=12.2006G/s
-benchmark_crc64_long_simd       135474 ns       135313 ns         5150 bytes_per_second=28.8682G/s
-benchmark_crc64_fixed_table        305 ns          305 ns      2313753 bytes_per_second=3.13055G/s
-benchmark_crc64_long_table     1436813 ns      1435035 ns          498 bytes_per_second=2.72206G/s
+------------------------------------------------------------------------------------------
+Benchmark                                Time             CPU   Iterations UserCounters...
+------------------------------------------------------------------------------------------
+benchmark_crc64_fixed_simd            38.2 ns         38.2 ns     18208840 bytes_per_second=24.9727G/s
+benchmark_crc64_long_simd           134445 ns       134278 ns         5231 bytes_per_second=29.0908G/s
+benchmark_crc64_fixed_table            302 ns          302 ns      2307190 bytes_per_second=3.15697G/s
+benchmark_crc64_long_table         1423657 ns      1422090 ns          495 bytes_per_second=2.74684G/s
+benchmark_crc64_varlength_simd       34594 ns        34555 ns        20293 bytes_per_second=56.5219G/s
+benchmark_crc64_varlength_table     709730 ns       708994 ns          964 bytes_per_second=2.75478G/s
 ```
 
 ### Clang-12 (x86_64)
 
 ```
-2021-06-30T15:33:55+08:00
+2021-07-01T10:30:50+08:00
 Running ./crc64-bench
 Run on (12 X 4400 MHz CPU s)
 CPU Caches:
@@ -35,15 +37,17 @@ CPU Caches:
   L1 Instruction 32 KiB (x6)
   L2 Unified 256 KiB (x6)
   L3 Unified 12288 KiB (x1)
-Load Average: 1.00, 0.91, 0.73
+Load Average: 0.58, 0.64, 0.55
 ***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
---------------------------------------------------------------------------------------
-Benchmark                            Time             CPU   Iterations UserCounters...
---------------------------------------------------------------------------------------
-benchmark_crc64_fixed_simd        78.6 ns         78.6 ns      8748214 bytes_per_second=12.1402G/s
-benchmark_crc64_long_simd       128588 ns       128444 ns         5415 bytes_per_second=30.412G/s
-benchmark_crc64_fixed_table        415 ns          414 ns      1671464 bytes_per_second=2.30153G/s
-benchmark_crc64_long_table     1734823 ns      1732972 ns          403 bytes_per_second=2.25408G/s
+------------------------------------------------------------------------------------------
+Benchmark                                Time             CPU   Iterations UserCounters...
+------------------------------------------------------------------------------------------
+benchmark_crc64_fixed_simd            37.2 ns         37.2 ns     18740858 bytes_per_second=25.6587G/s
+benchmark_crc64_long_simd           127764 ns       127633 ns         5492 bytes_per_second=30.6053G/s
+benchmark_crc64_fixed_table            460 ns          460 ns      1526008 bytes_per_second=2.07299G/s
+benchmark_crc64_long_table         1814667 ns      1812837 ns          385 bytes_per_second=2.15477G/s
+benchmark_crc64_varlength_simd       32863 ns        32831 ns        21361 bytes_per_second=59.491G/s
+benchmark_crc64_varlength_table     894499 ns       893570 ns          782 bytes_per_second=2.18575G/s
 ```
 
 ### GCC-11 (Aarch64)
