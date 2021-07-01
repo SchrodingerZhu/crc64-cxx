@@ -53,7 +53,7 @@ benchmark_crc64_varlength_table     894499 ns       893570 ns          782 bytes
 ### GCC-11 (Aarch64)
 
 ```
-2021-06-30T15:32:49+08:00
+2021-07-01T10:28:47+08:00
 Running ./crc64-bench
 Run on (96 X 2600 MHz CPU s)
 CPU Caches:
@@ -61,13 +61,15 @@ CPU Caches:
   L1 Instruction 64 KiB (x96)
   L2 Unified 512 KiB (x96)
   L3 Unified 49152 KiB (x4)
-Load Average: 1.71, 2.52, 2.81
+Load Average: 2.78, 2.99, 3.48
 ***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
---------------------------------------------------------------------------------------
-Benchmark                            Time             CPU   Iterations UserCounters...
---------------------------------------------------------------------------------------
-benchmark_crc64_fixed_simd         167 ns          167 ns      3077216 bytes_per_second=5.69453G/s
-benchmark_crc64_long_simd       423398 ns       423358 ns         1692 bytes_per_second=9.22682G/s
-benchmark_crc64_fixed_table        600 ns          600 ns      1166694 bytes_per_second=1.58913G/s
-benchmark_crc64_long_table     2467881 ns      2467552 ns          284 bytes_per_second=1.58305G/s
+------------------------------------------------------------------------------------------
+Benchmark                                Time             CPU   Iterations UserCounters...
+------------------------------------------------------------------------------------------
+benchmark_crc64_fixed_simd             170 ns          170 ns      4122286 bytes_per_second=5.6255G/s
+benchmark_crc64_long_simd           418681 ns       418576 ns         1725 bytes_per_second=9.33223G/s
+benchmark_crc64_fixed_table            600 ns          599 ns      1167795 bytes_per_second=1.59093G/s
+benchmark_crc64_long_table         2519544 ns      2518919 ns          279 bytes_per_second=1.55076G/s
+benchmark_crc64_varlength_simd       87231 ns        87210 ns         8016 bytes_per_second=22.3957G/s
+benchmark_crc64_varlength_table    1259384 ns      1259150 ns          554 bytes_per_second=1.55114G/s
 ```
