@@ -4,6 +4,7 @@
 
 #include <crc64.hpp>
 #include <gtest/gtest.h>
+#include <iomanip>
 #include <random>
 #include <vector>
 
@@ -40,7 +41,8 @@ TEST(Digest, Simple)
 TEST(Digest, Random)
 {
   auto dev = std::random_device{};
-  auto eng = std::mt19937_64{dev()};
+  auto seed = dev();
+  auto eng = std::mt19937_64{seed};
   auto dist = std::uniform_int_distribution<char>{};
   for (auto i = 0; i < 1000; ++i)
   {
@@ -55,6 +57,7 @@ TEST(Digest, Random)
     auto table = crc64::Digest(false);
     simd.write(data.data(), data.size());
     table.write(data.data(), data.size());
-    ASSERT_EQ(table.checksum(), simd.checksum());
+    ASSERT_EQ(table.checksum(), simd.checksum())
+      << "random engine seeded with: 0x" << std::hex << seed << std::endl;
   }
 }
