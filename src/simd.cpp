@@ -35,6 +35,9 @@ namespace crc64::detail
 
   uint64_t update_simd(uint64_t state, const void* src, size_t length)
   {
+    if (length == 0)
+      return state;
+
     const auto* ptr =
       reinterpret_cast<const SIMD*>(__builtin_assume_aligned(src, 128));
 
