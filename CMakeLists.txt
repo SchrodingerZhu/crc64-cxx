@@ -55,3 +55,20 @@ if (CRC64_ENABLE_BENCHES)
     target_compile_options(crc64-bench PRIVATE -march=native)
     target_link_libraries(crc64-bench crc64 benchmark::benchmark)
 endif()
+
+
+file(GLOB CRC64_FMT_FILES
+        benches/*.cpp
+        tests/*.cpp
+        src/*.cpp
+        include/*.hpp
+        include/*.h
+        include/crc64/*.hpp
+        include/crc64/*.h
+        )
+
+add_custom_target(
+        format
+        COMMAND clang-format
+        -i
+        ${CRC64_FMT_FILES})
