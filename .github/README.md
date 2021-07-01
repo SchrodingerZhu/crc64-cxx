@@ -1,4 +1,7 @@
 # crc64-cxx
+
+![ci](https://github.com/schrodingerzhu/crc64-cxx/actions/workflows/cmake.yml/badge.svg)
+
 SIMD CRC64 for C++
 
 ## Benchmark
