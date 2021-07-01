@@ -41,7 +41,7 @@ namespace crc64 {
 
         detail::simd_t _inner {};
 
-        explicit SIMD(detail::simd_t _inner) noexcept;
+        explicit SIMD(detail::simd_t inner) noexcept;
 
         static SIMD from_mul(poly64_t a, poly64_t b) noexcept;
 
@@ -90,7 +90,7 @@ namespace crc64 {
         return reduced ^ static_cast<uint64_t>(t1);
     }
 
-    inline SIMD::SIMD(detail::simd_t _inner) noexcept: _inner(_inner) {}
+    inline SIMD::SIMD(detail::simd_t inner) noexcept: _inner(inner) {}
 
     inline SIMD &SIMD::operator^=(const SIMD& that) noexcept {
         this->_inner = this->bitxor(that)._inner;
