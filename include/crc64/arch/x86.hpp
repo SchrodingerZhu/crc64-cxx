@@ -12,20 +12,20 @@ namespace crc64 {
 
     namespace detail {
         using simd_t = __m128i;
-    }
+    } // namespace detail
 
     class SIMD {
     public:
 
         SIMD(uint64_t high, uint64_t low) noexcept;
 
-        SIMD fold16(SIMD coeff) const noexcept;
+        [[nodiscard]] SIMD fold16(SIMD coeff) const noexcept;
 
-        SIMD fold8(uint64_t coeff) const noexcept;
+        [[nodiscard]] SIMD fold8(uint64_t coeff) const noexcept;
 
-        uint64_t barrett(uint64_t poly, uint64_t mu) const noexcept;
+        [[nodiscard]] uint64_t barrett(uint64_t poly, uint64_t mu) const noexcept;
 
-        SIMD bitxor(SIMD that) const noexcept;
+        [[nodiscard]] SIMD bitxor(SIMD that) const noexcept;
 
         static SIMD aligned(const void * address) noexcept;
 
@@ -93,6 +93,6 @@ namespace crc64 {
         return SIMD { _mm_load_si128(reinterpret_cast<const __m128i*>(address)) };
     }
 
-}
+} // namespace crc64
 
 #endif //CRC64_X86_HPP

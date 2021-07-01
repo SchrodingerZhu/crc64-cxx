@@ -13,7 +13,7 @@
 namespace crc64 {
     namespace detail {
         using simd_t = uint8x16_t;
-    }
+    } // namespace detail
     class SIMD {
     public:
 
@@ -21,13 +21,13 @@ namespace crc64 {
 
         SIMD(uint64_t high, uint64_t low) noexcept;
 
-        SIMD fold16(SIMD coeff) const noexcept;
+        [[nodiscard]] SIMD fold16(SIMD coeff) const noexcept;
 
-        SIMD fold8(uint64_t coeff) const noexcept;
+        [[nodiscard]] SIMD fold8(uint64_t coeff) const noexcept;
 
-        uint64_t barrett(uint64_t poly, uint64_t mu) const noexcept;
+        [[nodiscard]] uint64_t barrett(uint64_t poly, uint64_t mu) const noexcept;
 
-        SIMD bitxor(SIMD that) const noexcept;
+        [[nodiscard]] SIMD bitxor(SIMD that) const noexcept;
 
         static SIMD aligned(const void * address) noexcept;
 
@@ -45,11 +45,11 @@ namespace crc64 {
 
         static SIMD from_mul(poly64_t a, poly64_t b) noexcept;
 
-        Poly64Pair into_poly64pair() const noexcept;
+        [[nodiscard]] Poly64Pair into_poly64pair() const noexcept;
 
-        poly64_t high64() const noexcept;
+        [[nodiscard]] poly64_t high64() const noexcept;
 
-        poly64_t low64() const noexcept;
+        [[nodiscard]] poly64_t low64() const noexcept;
 
     };
 
@@ -128,6 +128,6 @@ namespace crc64 {
         auto y = vreinterpretq_p64_u8(_inner);
         return vgetq_lane_p64(y, 0);
     }
-}
+} // namespace crc64
 
 #endif //CRC64_AARCH64_HPP
