@@ -1,0 +1,60 @@
+name: CMake
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-aarch64:
+    # The CMake configure and build commands are platform agnostic and should work equally
+    # well on Windows or Mac.  You can convert this to a matrix build if you need
+    # cross-platform coverage.
+    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          # The full matrix of Dockerfiles would be extensive, so just
+          # cover each arch and OS at least once.
+          - BUILD_TYPE: Release
+          - BUILD_TYPE: Debug
+            
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Build and Test
+      uses: uraimo/run-on-arch-action@v2.0.5
+      with:
+        arch: aarch64
+        distro: fedora_latest
+        install: |
+          dnf install -y gcc gcc-g++ cmake ninja-build gtest gtest-devel google-benchmark-devel
+        run: | 
+          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} -GNinja
+          cmake --build ${{github.workspace}}/build --config ${{matrix.BUILD_TYPE}}
+          ${{github.workspace}}/build/crc64-test
+          ${{github.workspace}}/build/crc64-bench
+
+  build-amd64:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          # The full matrix of Dockerfiles would be extensive, so just
+          # cover each arch and OS at least once.
+          - BUILD_TYPE: Release
+          - BUILD_TYPE: Debug
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build and Test
+      run: | 
+        sudo apt-get install -y build-essential manpages-dev software-properties-common
+        sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+        sudo apt-get update -y && sudo apt-get install -y gcc-11 g++-11 cmake ninja-build libgtest-dev libbenchmark-dev
+        cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} -GNinja -DCMAKE_CXX_COMPILER=g++-11 -DCMAKE_C_COMPILER=gcc-11
+        cmake --build ${{github.workspace}}/build --config ${{matrix.BUILD_TYPE}}
+        ${{github.workspace}}/build/crc64-test
+        ${{github.workspace}}/build/crc64-bench
+  
