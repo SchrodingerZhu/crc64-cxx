@@ -7,6 +7,23 @@ on:
     branches: [ main ]
 
 jobs:
+  format:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: format
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y cmake ninja-build
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 12
+          sudo ln -sf /usr/bin/clang-format-12 /usr/bin/clang-format
+          cmake -B ${{github.workspace}}/build -GNinja -DCRC64_ENABLE_TESTS=OFF -DCRC64_ENABLE_BENCHES=OFF
+          cd ${{github.workspace}}/build && ninja format && git diff --exit-code
+
   build-aarch64:
     # The CMake configure and build commands are platform agnostic and should work equally
     # well on Windows or Mac.  You can convert this to a matrix build if you need
