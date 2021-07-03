@@ -37,11 +37,11 @@ namespace crc64 {
 
         bool operator==(const SIMD &that) const noexcept;
 
+        explicit SIMD(detail::simd_t inner) noexcept;
+
     private:
 
         detail::simd_t _inner {};
-
-        explicit SIMD(detail::simd_t inner) noexcept;
 
         static SIMD from_mul(poly64_t a, poly64_t b) noexcept;
 

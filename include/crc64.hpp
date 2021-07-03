@@ -14,11 +14,24 @@ namespace crc64
   public:
     explicit Digest(bool simd = true)
     {
-      if (simd && FAST_CRC64_SUPPORT)
+#if defined(__x86_64) || defined(__x86_64__)
+      if (simd && VPCLMULQDQ_CRC64_SUPPORT)
       {
-        update_fn = detail::update_fast;
+        update_fn = [](uint64_t _state, const void* _src, size_t _length) {
+          return crc64::detail::update_fast(
+            crc64::detail::update_vpclmulqdq, _state, _src, _length);
+        };
       }
       else
+#endif
+        if (simd && FAST_CRC64_SUPPORT)
+      {
+        update_fn = [](uint64_t _state, const void* _src, size_t _length) {
+          return crc64::detail::update_fast(
+            crc64::detail::update_simd, _state, _src, _length);
+        };
+      }
+      else // NOLINT(readability-misleading-indentation)
       {
         update_fn = detail::update_table;
       }

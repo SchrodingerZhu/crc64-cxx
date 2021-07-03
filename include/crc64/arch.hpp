@@ -11,14 +11,23 @@ namespace crc64
 {
   extern const bool FAST_CRC64_SUPPORT;
 
+#if defined(__x86_64) || defined(__x86_64__)
+  extern const bool VPCLMULQDQ_CRC64_SUPPORT;
+#endif
+
   namespace detail
   {
     extern uint64_t update_simd(uint64_t state, const void* src, size_t length);
 
+#if defined(__x86_64) || defined(__x86_64__)
+    extern uint64_t
+    update_vpclmulqdq(uint64_t state, const void* src, size_t length);
+#endif
+
+    template<uintptr_t ALIGN = 128, class Fn>
     static inline uint64_t
-    update_fast(uint64_t state, const void* src, size_t length)
+    update_fast(Fn func, uint64_t state, const void* src, size_t length)
     {
-      static const uintptr_t ALIGN = 128;
       static const uintptr_t MASK = ALIGN - 1;
 
       if (length == 0)
@@ -35,11 +44,11 @@ namespace crc64
       auto middle = length - offset - suffix;
       const auto* ptr = reinterpret_cast<const uint8_t*>(src);
       state = update_table(state, ptr, offset);
-      state = update_simd(state, ptr + offset, middle);
+      state = func(state, ptr + offset, middle);
       state = update_table(state, ptr + offset + middle, suffix);
-
       return state;
     }
+
   } // namespace detail
 } // namespace crc64
 

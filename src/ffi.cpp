@@ -16,11 +16,24 @@ extern "C"
   crc64_digest_t crc64_create_digest(bool enable_simd)
   {
     crc64_digest_t result;
-    if (enable_simd && crc64::FAST_CRC64_SUPPORT)
+#if defined(__x86_64) || defined(__x86_64__)
+    if (enable_simd && crc64::VPCLMULQDQ_CRC64_SUPPORT)
     {
-      result.update_fn = crc64::detail::update_fast;
+      result.update_fn = [](uint64_t _state, const void* _src, size_t _length) {
+        return crc64::detail::update_fast(
+          crc64::detail::update_vpclmulqdq, _state, _src, _length);
+      };
     }
     else
+#endif
+      if (enable_simd && crc64::FAST_CRC64_SUPPORT)
+    {
+      result.update_fn = [](uint64_t _state, const void* _src, size_t _length) {
+        return crc64::detail::update_fast(
+          crc64::detail::update_simd, _state, _src, _length);
+      };
+    }
+    else // NOLINT(readability-misleading-indentation)
     {
       result.update_fn = crc64::detail::update_table;
     }
