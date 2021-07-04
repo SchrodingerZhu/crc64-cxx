@@ -103,8 +103,30 @@ benchmark_crc64_long_table         1450123 ns      1446379 ns          484 bytes
 benchmark_crc64_varlength_table     722856 ns       721454 ns          970 bytes_per_second=2.70721G/s
 benchmark_crc64_gib_table        382071532 ns    381179563 ns            2 bytes_per_second=2.62344G/s
 ```
-
-### 512-bit Enabled
+### 256-bit
+```
+2021-07-04T16:11:39+08:00
+Running ./crc64-bench
+Run on (2 X 2700 MHz CPU s)
+CPU Caches:
+  L1 Data 48 KiB (x1)
+  L1 Instruction 32 KiB (x1)
+  L2 Unified 1280 KiB (x1)
+  L3 Unified 49152 KiB (x1)
+Load Average: 0.00, 0.05, 0.03
+------------------------------------------------------------------------------------------
+Benchmark                                Time             CPU   Iterations UserCounters...
+------------------------------------------------------------------------------------------
+benchmark_crc64_fixed_simd            92.9 ns         92.7 ns      7550331 bytes_per_second=10.2829G/s
+benchmark_crc64_long_simd           133037 ns       132673 ns         5271 bytes_per_second=29.4427G/s
+benchmark_crc64_varlength_simd       32416 ns        32373 ns        21619 bytes_per_second=60.3313G/s
+benchmark_crc64_gib_simd          68115471 ns     67914218 ns           10 bytes_per_second=14.7245G/s
+benchmark_crc64_fixed_table            351 ns          350 ns      1997079 bytes_per_second=2.72164G/s
+benchmark_crc64_long_table         1452346 ns      1448684 ns          483 bytes_per_second=2.69641G/s
+benchmark_crc64_varlength_table     723933 ns       722399 ns          969 bytes_per_second=2.70367G/s
+benchmark_crc64_gib_table        383037403 ns    382152799 ns            2 bytes_per_second=2.61675G/s
+```
+### 512-bit
 ```
 Running ./crc64-bench
 Run on (2 X 2700 MHz CPU s)
