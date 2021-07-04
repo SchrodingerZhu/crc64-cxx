@@ -30,10 +30,10 @@ TEST(Digest, Simple)
   for (auto [x, y] : cases)
   {
     auto simd = crc64::Digest();
-    simd.write(x.data(), x.size());
+    simd.update(x.data(), x.size());
     ASSERT_EQ(simd.checksum(), y);
     auto table = crc64::Digest(crc64::Mode::Table);
-    table.write(x.data(), x.size());
+    table.update(x.data(), x.size());
     ASSERT_EQ(table.checksum(), y);
   }
 }
@@ -55,8 +55,8 @@ TEST(Digest, Random)
     }
     auto simd = crc64::Digest();
     auto table = crc64::Digest(crc64::Mode::Table);
-    simd.write(data.data(), data.size());
-    table.write(data.data(), data.size());
+    simd.update(data.data(), data.size());
+    table.update(data.data(), data.size());
     ASSERT_EQ(table.checksum(), simd.checksum())
       << "random engine seeded with: 0x" << std::hex << seed << std::endl;
   }

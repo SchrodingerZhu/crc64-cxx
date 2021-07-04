@@ -59,7 +59,7 @@ namespace crc64
       }
     };
 
-    void write(const void* src, size_t length)
+    void update(const void* src, size_t length)
     {
       state = update_fn(state, src, length);
     }

@@ -35,7 +35,7 @@ extern "C"
 
   crc64_digest_t crc64_create_digest(crc64_mode_t mode);
 
-  void crc64_write(crc64_digest_t current, const void* src, size_t length);
+  void crc64_update(crc64_digest_t current, const void* src, size_t length);
 
   crc64_t crc64_checksum(crc64_digest_t current);
 

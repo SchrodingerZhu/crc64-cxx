@@ -15,7 +15,7 @@ static void benchmark_crc64_fixed_simd(benchmark::State& state)
   for (auto _ : state)
   {
     UNUSED(_);
-    d.write(data.data(), data.size());
+    d.update(data.data(), data.size());
     benchmark::DoNotOptimize(d.checksum());
   }
   state.SetBytesProcessed(1024 * static_cast<int64_t>(state.iterations()));
@@ -28,7 +28,7 @@ static void benchmark_crc64_fixed_table(benchmark::State& state)
   for (auto _ : state)
   {
     UNUSED(_);
-    d.write(data.data(), data.size());
+    d.update(data.data(), data.size());
     benchmark::DoNotOptimize(d.checksum());
   }
   state.SetBytesProcessed(1024 * static_cast<int64_t>(state.iterations()));
@@ -48,7 +48,7 @@ static void benchmark_crc64_long_simd(benchmark::State& state)
   for (auto _ : state)
   {
     UNUSED(_);
-    d.write(data.data(), data.size());
+    d.update(data.data(), data.size());
     benchmark::DoNotOptimize(d.checksum());
   }
   state.SetBytesProcessed(
@@ -69,7 +69,7 @@ static void benchmark_crc64_long_table(benchmark::State& state)
   for (auto _ : state)
   {
     UNUSED(_);
-    d.write(data.data(), data.size());
+    d.update(data.data(), data.size());
     benchmark::DoNotOptimize(d.checksum());
   }
 
@@ -93,7 +93,7 @@ static void benchmark_crc64_varlength_simd(benchmark::State& state)
     UNUSED(_);
     for (auto l = 1; l < 1024 * 1024; l <<= 1)
     {
-      d.write(data.data(), l);
+      d.update(data.data(), l);
     }
     benchmark::DoNotOptimize(d.checksum());
   }
@@ -117,7 +117,7 @@ static void benchmark_crc64_varlength_table(benchmark::State& state)
     UNUSED(_);
     for (auto l = 1; l <= 1024 * 1024; l <<= 1)
     {
-      d.write(data.data(), l);
+      d.update(data.data(), l);
     }
     benchmark::DoNotOptimize(d.checksum());
   }
@@ -139,7 +139,7 @@ static void benchmark_crc64_gib_simd(benchmark::State& state)
   for (auto _ : state)
   {
     UNUSED(_);
-    d.write(data.data(), data.size());
+    d.update(data.data(), data.size());
     benchmark::DoNotOptimize(d.checksum());
   }
   state.SetBytesProcessed(
@@ -160,7 +160,7 @@ static void benchmark_crc64_gib_table(benchmark::State& state)
   for (auto _ : state)
   {
     UNUSED(_);
-    d.write(data.data(), data.size());
+    d.update(data.data(), data.size());
     benchmark::DoNotOptimize(d.checksum());
   }
 

@@ -54,7 +54,7 @@ extern "C"
     return result;
   }
 
-  void crc64_write(crc64_digest_t current, const void* src, size_t length)
+  void crc64_update(crc64_digest_t current, const void* src, size_t length)
   {
     current.state = current.update_fn(current.state, src, length);
   }
