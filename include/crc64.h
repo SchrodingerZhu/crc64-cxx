@@ -14,6 +14,17 @@ extern "C"
 {
 #endif
 
+  typedef enum // NOLINT(modernize-use-using)
+  {
+    CRC64_MODE_AUTO,
+    CRC64_MODE_SIMD_128,
+#if defined(__x86_64) || defined(__x86_64__)
+    CRC64_MODE_SIMD_256,
+    CRC64_MODE_SIMD_512,
+#endif
+    CRC64_MODE_TABLE,
+  } crc64_mode_t;
+
   typedef uint64_t crc64_t; // NOLINT(modernize-use-using)
 
   typedef struct // NOLINT(modernize-use-using)
@@ -22,7 +33,7 @@ extern "C"
     crc64_t state;
   } crc64_digest_t;
 
-  crc64_digest_t crc64_create_digest(bool enable_simd);
+  crc64_digest_t crc64_create_digest(crc64_mode_t mode);
 
   void crc64_write(crc64_digest_t current, const void* src, size_t length);
 

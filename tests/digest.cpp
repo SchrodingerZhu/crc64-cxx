@@ -32,7 +32,7 @@ TEST(Digest, Simple)
     auto simd = crc64::Digest();
     simd.write(x.data(), x.size());
     ASSERT_EQ(simd.checksum(), y);
-    auto table = crc64::Digest(false);
+    auto table = crc64::Digest(crc64::Mode::Table);
     table.write(x.data(), x.size());
     ASSERT_EQ(table.checksum(), y);
   }
@@ -54,7 +54,7 @@ TEST(Digest, Random)
       data[i] = dist(eng);
     }
     auto simd = crc64::Digest();
-    auto table = crc64::Digest(false);
+    auto table = crc64::Digest(crc64::Mode::Table);
     simd.write(data.data(), data.size());
     table.write(data.data(), data.size());
     ASSERT_EQ(table.checksum(), simd.checksum())

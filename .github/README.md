@@ -6,7 +6,7 @@ SIMD CRC64 for C++
 
 ## Benchmark
 
-### GCC-11 (x86_64)
+### GCC-11 (x86_64, Intel(R) Xeon(R) E-2176M  CPU @ 2.70GHz)
 ```
 2021-07-01T10:28:14+08:00
 Running ./crc64-bench
@@ -29,7 +29,7 @@ benchmark_crc64_varlength_simd       34594 ns        34555 ns        20293 bytes
 benchmark_crc64_varlength_table     709730 ns       708994 ns          964 bytes_per_second=2.75478G/s
 ```
 
-### Clang-12 (x86_64)
+### Clang-12 (x86_64, Intel(R) Xeon(R) E-2176M  CPU @ 2.70GHz)
 
 ```
 2021-07-01T10:30:50+08:00
@@ -75,4 +75,76 @@ benchmark_crc64_fixed_table            600 ns          599 ns      1167795 bytes
 benchmark_crc64_long_table         2519544 ns      2518919 ns          279 bytes_per_second=1.55076G/s
 benchmark_crc64_varlength_simd       87231 ns        87210 ns         8016 bytes_per_second=22.3957G/s
 benchmark_crc64_varlength_table    1259384 ns      1259150 ns          554 bytes_per_second=1.55114G/s
+```
+
+## Separate Test for `VPCLMULQDQ`
+
+Runs on `Intel(R) Xeon(R) Platinum 8369B CPU @ 2.70GHz`. Compiled with `gcc-11`.
+
+### 128-bit Only
+```
+Running ./crc64-bench
+Run on (2 X 2700 MHz CPU s)
+CPU Caches:
+  L1 Data 48 KiB (x1)
+  L1 Instruction 32 KiB (x1)
+  L2 Unified 1280 KiB (x1)
+  L3 Unified 49152 KiB (x1)
+Load Average: 0.23, 0.23, 0.13
+------------------------------------------------------------------------------------------
+Benchmark                                Time             CPU   Iterations UserCounters...
+------------------------------------------------------------------------------------------
+benchmark_crc64_fixed_simd            92.3 ns         92.2 ns      7586516 bytes_per_second=10.3475G/s
+benchmark_crc64_long_simd           193467 ns       193004 ns         3614 bytes_per_second=20.2392G/s
+benchmark_crc64_varlength_simd       48320 ns        48261 ns        14500 bytes_per_second=40.47G/s
+benchmark_crc64_gib_simd          81279160 ns     81082114 ns            9 bytes_per_second=12.3332G/s
+benchmark_crc64_fixed_table            351 ns          350 ns      1998319 bytes_per_second=2.72336G/s
+benchmark_crc64_long_table         1450123 ns      1446379 ns          484 bytes_per_second=2.70071G/s
+benchmark_crc64_varlength_table     722856 ns       721454 ns          970 bytes_per_second=2.70721G/s
+benchmark_crc64_gib_table        382071532 ns    381179563 ns            2 bytes_per_second=2.62344G/s
+```
+### 256-bit
+```
+2021-07-04T16:11:39+08:00
+Running ./crc64-bench
+Run on (2 X 2700 MHz CPU s)
+CPU Caches:
+  L1 Data 48 KiB (x1)
+  L1 Instruction 32 KiB (x1)
+  L2 Unified 1280 KiB (x1)
+  L3 Unified 49152 KiB (x1)
+Load Average: 0.00, 0.05, 0.03
+------------------------------------------------------------------------------------------
+Benchmark                                Time             CPU   Iterations UserCounters...
+------------------------------------------------------------------------------------------
+benchmark_crc64_fixed_simd            92.9 ns         92.7 ns      7550331 bytes_per_second=10.2829G/s
+benchmark_crc64_long_simd           133037 ns       132673 ns         5271 bytes_per_second=29.4427G/s
+benchmark_crc64_varlength_simd       32416 ns        32373 ns        21619 bytes_per_second=60.3313G/s
+benchmark_crc64_gib_simd          68115471 ns     67914218 ns           10 bytes_per_second=14.7245G/s
+benchmark_crc64_fixed_table            351 ns          350 ns      1997079 bytes_per_second=2.72164G/s
+benchmark_crc64_long_table         1452346 ns      1448684 ns          483 bytes_per_second=2.69641G/s
+benchmark_crc64_varlength_table     723933 ns       722399 ns          969 bytes_per_second=2.70367G/s
+benchmark_crc64_gib_table        383037403 ns    382152799 ns            2 bytes_per_second=2.61675G/s
+```
+### 512-bit
+```
+Running ./crc64-bench
+Run on (2 X 2700 MHz CPU s)
+CPU Caches:
+  L1 Data 48 KiB (x1)
+  L1 Instruction 32 KiB (x1)
+  L2 Unified 1280 KiB (x1)
+  L3 Unified 49152 KiB (x1)
+Load Average: 0.57, 0.35, 0.18
+------------------------------------------------------------------------------------------
+Benchmark                                Time             CPU   Iterations UserCounters...
+------------------------------------------------------------------------------------------
+benchmark_crc64_fixed_simd             106 ns          106 ns      6584511 bytes_per_second=8.99199G/s
+benchmark_crc64_long_simd           129746 ns       129406 ns         5404 bytes_per_second=30.1859G/s
+benchmark_crc64_varlength_simd       32707 ns        32664 ns        21427 bytes_per_second=59.7935G/s
+benchmark_crc64_gib_simd          66175908 ns     65982478 ns           11 bytes_per_second=15.1555G/s
+benchmark_crc64_fixed_table            350 ns          349 ns      2000785 bytes_per_second=2.73026G/s
+benchmark_crc64_long_table         1447653 ns      1444234 ns          484 bytes_per_second=2.70472G/s
+benchmark_crc64_varlength_table     721965 ns       720647 ns          972 bytes_per_second=2.71024G/s
+benchmark_crc64_gib_table        381661762 ns    380784321 ns            2 bytes_per_second=2.62616G/s
 ```

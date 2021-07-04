@@ -13,14 +13,40 @@
 
 extern "C"
 {
-  crc64_digest_t crc64_create_digest(bool enable_simd)
+  crc64_digest_t crc64_create_digest(crc64_mode_t mode)
   {
     crc64_digest_t result;
-    if (enable_simd && crc64::FAST_CRC64_SUPPORT)
+#if defined(__x86_64) || defined(__x86_64__)
+    if (
+      (mode == CRC64_MODE_AUTO && crc64::VPCLMULQDQ_AVX512_CRC64_SUPPORT) ||
+      mode == CRC64_MODE_SIMD_512)
     {
-      result.update_fn = crc64::detail::update_fast;
+      result.update_fn = [](uint64_t _state, const void* _src, size_t _length) {
+        return crc64::detail::update_fast<512>(
+          crc64::detail::update_vpclmulqdq_avx512, _state, _src, _length);
+      };
+    }
+    else if (
+      (mode == CRC64_MODE_AUTO && crc64::VPCLMULQDQ_AVX2_CRC64_SUPPORT) ||
+      mode == CRC64_MODE_SIMD_256)
+    {
+      result.update_fn = [](uint64_t _state, const void* _src, size_t _length) {
+        return crc64::detail::update_fast<256>(
+          crc64::detail::update_vpclmulqdq_avx2, _state, _src, _length);
+      };
     }
     else
+#endif
+      if (
+        (mode == CRC64_MODE_AUTO && crc64::FAST_CRC64_SUPPORT) ||
+        mode == CRC64_MODE_SIMD_128)
+    {
+      result.update_fn = [](uint64_t _state, const void* _src, size_t _length) {
+        return crc64::detail::update_fast(
+          crc64::detail::update_simd, _state, _src, _length);
+      };
+    }
+    else // NOLINT(readability-misleading-indentation)
     {
       result.update_fn = crc64::detail::update_table;
     }
