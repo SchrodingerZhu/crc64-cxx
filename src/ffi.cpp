@@ -54,13 +54,13 @@ extern "C"
     return result;
   }
 
-  void crc64_update(crc64_digest_t current, const void* src, size_t length)
+  void crc64_update(crc64_digest_t* current, const void* src, size_t length)
   {
-    current.state = current.update_fn(current.state, src, length);
+    current->state = current->update_fn(current->state, src, length);
   }
 
-  crc64_t crc64_checksum(crc64_digest_t current)
+  crc64_t crc64_checksum(const crc64_digest_t* current)
   {
-    return ~current.state;
+    return ~current->state;
   }
 }

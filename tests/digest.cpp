@@ -3,6 +3,7 @@
 //
 
 #include <crc64.hpp>
+#include <cstring>
 #include <gtest/gtest.h>
 #include <iomanip>
 #include <random>
@@ -58,6 +59,59 @@ TEST(Digest, Random)
     simd.update(data.data(), data.size());
     table.update(data.data(), data.size());
     ASSERT_EQ(table.checksum(), simd.checksum())
+      << "random engine seeded with: 0x" << std::hex << seed << std::endl;
+  }
+}
+
+TEST(Digest, Alignment)
+{
+  auto dev = std::random_device{};
+  auto seed = dev();
+  auto eng = std::mt19937_64{seed};
+  auto dist = std::uniform_int_distribution<char>{};
+  auto data = std::vector<char>(8192);
+  for (auto& i : data)
+  {
+    i = dist(eng);
+  }
+  auto digest = crc64::Digest{};
+  digest.update(data.data(), data.size());
+  auto initial = digest.checksum();
+  auto storage =
+    reinterpret_cast<char*>(::operator new (8192 * 2, std::align_val_t{1024}));
+  for (auto align = 1; align <= 600; ++align)
+  {
+    std::memcpy(storage + align, data.data(), data.size());
+    auto inner = crc64::Digest{};
+    inner.update(storage + align, data.size());
+    ASSERT_EQ( // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+      inner.checksum(),
+      initial)
+      << "random engine seeded with: 0x" << std::hex << seed << std::endl;
+  }
+  ::operator delete (storage, std::align_val_t{1024});
+}
+
+TEST(Digest, Consection)
+{
+  auto dev = std::random_device{};
+  auto seed = dev();
+  auto eng = std::mt19937_64{seed};
+  auto dist = std::uniform_int_distribution<char>{};
+  auto data = std::vector<char>(65536);
+  auto digest = crc64::Digest{};
+  auto a = crc64::Digest{crc64::Mode::Table};
+  auto b = crc64::Digest{crc64::Mode::Auto};
+  for (auto& i : data)
+  {
+    i = dist(eng);
+  }
+  auto acc = 0;
+  for (auto i = 1; acc + i <= data.size(); acc += i, i <<= 1)
+  {
+    a.update(data.data() + acc, i);
+    b.update(data.data() + acc, i);
+    ASSERT_EQ(a.checksum(), b.checksum())
       << "random engine seeded with: 0x" << std::hex << seed << std::endl;
   }
 }

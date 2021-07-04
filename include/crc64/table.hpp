@@ -1517,6 +1517,14 @@ namespace crc64::detail
     auto address = reinterpret_cast<uintptr_t>(src);
     auto ptr = reinterpret_cast<const uint8_t*>(src);
     auto prefix = (-address) & 15;
+    if (prefix >= length)
+    {
+      for (size_t i = 0; i < prefix; ++i, ++ptr)
+      {
+        state = update1(state, *ptr);
+      };
+      return state;
+    }
     auto suffix = (length - prefix) & 15;
     auto middle = length - prefix - suffix;
     for (size_t i = 0; i < prefix; ++i, ++ptr)
