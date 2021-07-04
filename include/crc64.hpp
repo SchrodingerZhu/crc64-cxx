@@ -9,20 +9,34 @@
 
 namespace crc64
 {
+  enum class Mode
+  {
+    Auto,
+    SIMD_128,
+#if defined(__x86_64) || defined(__x86_64__)
+    SIMD_256,
+    SIMD_512,
+#endif
+    Table
+  };
   class Digest
   {
   public:
-    explicit Digest(bool simd = true)
+    explicit Digest(Mode mode = Mode::Auto)
     {
 #if defined(__x86_64) || defined(__x86_64__)
-      if (simd && VPCLMULQDQ_AVX512_CRC64_SUPPORT)
+      if (
+        (mode == Mode::Auto && VPCLMULQDQ_AVX512_CRC64_SUPPORT) ||
+        mode == Mode::SIMD_512)
       {
         update_fn = [](uint64_t _state, const void* _src, size_t _length) {
           return crc64::detail::update_fast<512>(
             crc64::detail::update_vpclmulqdq_avx512, _state, _src, _length);
         };
       }
-      else if (simd && VPCLMULQDQ_AVX2_CRC64_SUPPORT)
+      else if (
+        (mode == Mode::Auto && VPCLMULQDQ_AVX2_CRC64_SUPPORT) ||
+        mode == Mode::SIMD_256)
       {
         update_fn = [](uint64_t _state, const void* _src, size_t _length) {
           return crc64::detail::update_fast<256>(
@@ -31,7 +45,8 @@ namespace crc64
       }
       else
 #endif
-        if (simd && FAST_CRC64_SUPPORT)
+        if (
+          (mode == Mode::Auto && FAST_CRC64_SUPPORT) || mode == Mode::SIMD_128)
       {
         update_fn = [](uint64_t _state, const void* _src, size_t _length) {
           return crc64::detail::update_fast(
