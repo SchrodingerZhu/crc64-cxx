@@ -69,16 +69,37 @@ namespace crc64
       for (size_t i = 256; i < length; i += 256, ptr += 8)
       {
         Slice<4> chunk[2] = {load_slice(ptr + 0), load_slice(ptr + 4)};
-        for (size_t j = 0; j < 4; ++j)
         {
-          {
-            auto folded = fold(x[j], coeff);
-            x[j] = _mm256_xor_si256(chunk[0][j], folded);
-          }
-          {
-            auto folded = fold(x[j], coeff);
-            x[j] = _mm256_xor_si256(chunk[1][j], folded);
-          }
+          auto folded = fold(x[0], coeff);
+          x[0] = _mm256_xor_si256(chunk[0][0], folded);
+        }
+        {
+          auto folded = fold(x[2], coeff);
+          x[0] = _mm256_xor_si256(chunk[1][0], folded);
+        }
+        {
+          auto folded = fold(x[1], coeff);
+          x[1] = _mm256_xor_si256(chunk[0][1], folded);
+        }
+        {
+          auto folded = fold(x[1], coeff);
+          x[1] = _mm256_xor_si256(chunk[1][1], folded);
+        }
+        {
+          auto folded = fold(x[2], coeff);
+          x[2] = _mm256_xor_si256(chunk[0][2], folded);
+        }
+        {
+          auto folded = fold(x[2], coeff);
+          x[2] = _mm256_xor_si256(chunk[1][2], folded);
+        }
+        {
+          auto folded = fold(x[3], coeff);
+          x[3] = _mm256_xor_si256(chunk[0][3], folded);
+        }
+        {
+          auto folded = fold(x[3], coeff);
+          x[3] = _mm256_xor_si256(chunk[1][3], folded);
         }
       }
 
