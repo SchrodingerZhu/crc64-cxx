@@ -12,7 +12,7 @@ namespace
 
 namespace crc64
 {
-  const bool VPCLMULQDQ_CRC64_SUPPORT =
+  const bool VPCLMULQDQ_AVX512_CRC64_SUPPORT =
     _features.avx512vl && _features.vpclmulqdq && _features.avx512dq;
 
   namespace detail
@@ -22,7 +22,8 @@ namespace crc64
     template<size_t N>
     using Slice = std::array<avx512_t, N>;
 
-    uint64_t update_vpclmulqdq(uint64_t state, const void* src, size_t length)
+    uint64_t
+    update_vpclmulqdq_avx512(uint64_t state, const void* src, size_t length)
     {
       if (length == 0)
         return state;

@@ -12,7 +12,8 @@ namespace crc64
   extern const bool FAST_CRC64_SUPPORT;
 
 #if defined(__x86_64) || defined(__x86_64__)
-  extern const bool VPCLMULQDQ_CRC64_SUPPORT;
+  extern const bool VPCLMULQDQ_AVX512_CRC64_SUPPORT;
+  extern const bool VPCLMULQDQ_AVX2_CRC64_SUPPORT;
 #endif
 
   namespace detail
@@ -21,7 +22,10 @@ namespace crc64
 
 #if defined(__x86_64) || defined(__x86_64__)
     extern uint64_t
-    update_vpclmulqdq(uint64_t state, const void* src, size_t length);
+    update_vpclmulqdq_avx512(uint64_t state, const void* src, size_t length);
+
+    extern uint64_t
+    update_vpclmulqdq_avx2(uint64_t state, const void* src, size_t length);
 #endif
 
     template<uintptr_t ALIGN = 128, class Fn>

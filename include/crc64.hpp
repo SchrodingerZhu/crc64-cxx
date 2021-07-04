@@ -15,11 +15,18 @@ namespace crc64
     explicit Digest(bool simd = true)
     {
 #if defined(__x86_64) || defined(__x86_64__)
-      if (simd && VPCLMULQDQ_CRC64_SUPPORT)
+      if (simd && VPCLMULQDQ_AVX512_CRC64_SUPPORT)
       {
         update_fn = [](uint64_t _state, const void* _src, size_t _length) {
           return crc64::detail::update_fast<512>(
-            crc64::detail::update_vpclmulqdq, _state, _src, _length);
+            crc64::detail::update_vpclmulqdq_avx512, _state, _src, _length);
+        };
+      }
+      else if (simd && VPCLMULQDQ_AVX2_CRC64_SUPPORT)
+      {
+        update_fn = [](uint64_t _state, const void* _src, size_t _length) {
+          return crc64::detail::update_fast<256>(
+            crc64::detail::update_vpclmulqdq_avx2, _state, _src, _length);
         };
       }
       else
