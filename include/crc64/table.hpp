@@ -1500,7 +1500,12 @@ namespace crc64::detail
       uint64_t num{};
       uint8_t s[8];
     };
+
+#if defined(__BIG_ENDIAN__)
+    num = __builtin_bswap64(state);
+#else
     num = state;
+#endif
 
     return TABLE_0[slice[15]] ^ TABLE_1[slice[14]] ^ TABLE_2[slice[13]] ^
       TABLE_3[slice[12]] ^ TABLE_4[slice[11]] ^ TABLE_5[slice[10]] ^
