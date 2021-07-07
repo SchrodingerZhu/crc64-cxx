@@ -5,10 +5,10 @@
 #ifndef CRC64_CRC64_H
 #define CRC64_CRC64_H
 
+#include <crc64_config.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <crc64_config.h>
 
 #ifdef __cplusplus
 extern "C"

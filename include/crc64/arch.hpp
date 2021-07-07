@@ -6,6 +6,7 @@
 #define CRC64_ARCH_HPP
 
 #include "table.hpp"
+
 #include <crc64_config.h>
 namespace crc64
 {
