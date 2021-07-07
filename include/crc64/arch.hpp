@@ -6,12 +6,12 @@
 #define CRC64_ARCH_HPP
 
 #include "table.hpp"
-
+#include <crc64_config.h>
 namespace crc64
 {
   extern const bool FAST_CRC64_SUPPORT;
 
-#if defined(__x86_64) || defined(__x86_64__)
+#ifdef CRC64_VPCLMULQDQ_SUPPORT
   extern const bool VPCLMULQDQ_AVX512_CRC64_SUPPORT;
   extern const bool VPCLMULQDQ_AVX2_CRC64_SUPPORT;
 #endif
@@ -20,7 +20,7 @@ namespace crc64
   {
     extern uint64_t update_simd(uint64_t state, const void* src, size_t length);
 
-#if defined(__x86_64) || defined(__x86_64__)
+#ifdef CRC64_VPCLMULQDQ_SUPPORT
     extern uint64_t
     update_vpclmulqdq_avx512(uint64_t state, const void* src, size_t length);
 

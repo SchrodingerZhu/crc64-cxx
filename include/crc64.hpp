@@ -6,6 +6,7 @@
 #define CRC64_CRC64_HPP
 
 #include <crc64/arch.hpp>
+#include <crc64_config.h>
 
 namespace crc64
 {
@@ -13,7 +14,7 @@ namespace crc64
   {
     Auto,
     SIMD_128,
-#if defined(__x86_64) || defined(__x86_64__)
+#ifdef CRC64_VPCLMULQDQ_SUPPORT
     SIMD_256,
     SIMD_512,
 #endif
@@ -24,7 +25,7 @@ namespace crc64
   public:
     explicit Digest(Mode mode = Mode::Auto)
     {
-#if defined(__x86_64) || defined(__x86_64__)
+#ifdef CRC64_VPCLMULQDQ_SUPPORT
       if (
         (mode == Mode::Auto && VPCLMULQDQ_AVX512_CRC64_SUPPORT) ||
         mode == Mode::SIMD_512)

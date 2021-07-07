@@ -19,6 +19,10 @@ option(CRC64_DISABLE_WERROR "Disable strict mode" OFF)
 option(CRC64_ENABLE_UNROLL "Enable stronger unrolling" OFF)
 
 
+include(CheckCXXCompilerFlag)
+check_cxx_compiler_flag(-mvpclmulqdq CRC64_VPCLMULQDQ_SUPPORT)
+
+
 if (CRC64_ENABLE_CAPI)
     set(CRC64_CAPI_SRC src/ffi.cpp)
 else()
@@ -55,11 +59,19 @@ else()
     set(CRC64_ADDITIONAL_FLAGS "")
 endif()
 
+if(CRC64_VPCLMULQDQ_SUPPORT)
+    set(CRC64_VPCLMULQDQ_SRC src/vpclmulqdq_avx512.cpp src/vpclmulqdq_avx2.cpp)
+else()
+    set(CRC64_VPCLMULQDQ_SRC "")
+endif()
+
+configure_file(include/crc64_config.h.in ${CMAKE_CURRENT_BINARY_DIR}/include/crc64_config.h)
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
+
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)")
     add_library(crc64-x86 STATIC
             src/simd.cpp
-            src/vpclmulqdq_avx512.cpp
-            src/vpclmulqdq_avx2.cpp
+            ${CRC64_VPCLMULQDQ_SRC}
             ${CRC64_CAPI_SRC})
     target_compile_options(crc64-x86 PRIVATE
             ${CRC64_ADDITIONAL_FLAGS}
@@ -67,10 +79,12 @@ if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)")
     target_link_libraries(crc64 INTERFACE crc64-x86 cpu_features)
     set_source_files_properties(src/simd.cpp
             PROPERTIES COMPILE_FLAGS "-msse2 -msse4.1 -mpclmul")
-    set_source_files_properties(src/vpclmulqdq_avx512.cpp
+    if(CRC64_VPCLMULQDQ_SUPPORT)
+        set_source_files_properties(src/vpclmulqdq_avx512.cpp
             PROPERTIES COMPILE_FLAGS "-mvpclmulqdq -mavx512vl -mavx512dq -mpclmul -Wno-ignored-attributes")
-    set_source_files_properties(src/vpclmulqdq_avx2.cpp
+        set_source_files_properties(src/vpclmulqdq_avx2.cpp
             PROPERTIES COMPILE_FLAGS "-mvpclmulqdq -mavx2 -mpclmul -Wno-ignored-attributes")
+    endif()
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "(arm64)|(ARM64)|(aarch64)|(AARCH64)")
     add_library(crc64-aarch64 STATIC src/simd.cpp ${CRC64_CAPI_SRC})
     target_compile_options(crc64-aarch64 PRIVATE

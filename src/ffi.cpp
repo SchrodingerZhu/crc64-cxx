@@ -1,6 +1,5 @@
 #include <crc64.h>
 #include <crc64.hpp>
-
 #if defined(__x86_64) || defined(__x86_64__)
 
 #  include <crc64/arch/x86.hpp>
@@ -16,7 +15,7 @@ extern "C"
   crc64_digest_t crc64_create_digest(crc64_mode_t mode)
   {
     crc64_digest_t result;
-#if defined(__x86_64) || defined(__x86_64__)
+#ifdef CRC64_VPCLMULQDQ_SUPPORT
     if (
       (mode == CRC64_MODE_AUTO && crc64::VPCLMULQDQ_AVX512_CRC64_SUPPORT) ||
       mode == CRC64_MODE_SIMD_512)

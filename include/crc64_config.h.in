@@ -1,0 +1,8 @@
+//
+// Created by schrodinger on 7/7/21.
+//
+
+#ifndef CRC64_CRC64_CONFIG_H
+#define CRC64_CRC64_CONFIG_H
+#cmakedefine CRC64_VPCLMULQDQ_SUPPORT @CRC64_VPCLMULQDQ_SUPPORT@
+#endif // CRC64_CRC64_CONFIG_H

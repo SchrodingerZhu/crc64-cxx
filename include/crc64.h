@@ -8,6 +8,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <crc64_config.h>
 
 #ifdef __cplusplus
 extern "C"
@@ -18,7 +19,7 @@ extern "C"
   {
     CRC64_MODE_AUTO,
     CRC64_MODE_SIMD_128,
-#if defined(__x86_64) || defined(__x86_64__)
+#ifdef CRC64_VPCLMULQDQ_SUPPORT
     CRC64_MODE_SIMD_256,
     CRC64_MODE_SIMD_512,
 #endif
