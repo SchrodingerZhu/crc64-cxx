@@ -69,10 +69,17 @@ namespace crc64 {
     }
 
     inline SIMD SIMD::fold16(SIMD coeff) const noexcept {
-//        auto [x0, x1] = into_poly64pair();
-//        auto [c0, c1] = coeff.into_poly64pair();
-//        auto h = SIMD::from_mul(c0, x0);
-//        auto l = SIMD::from_mul(c1, x1);
+      /* GCC does not seem to use pmull2 properly and we hence use
+       * inline assembly to improve the performance.
+       * For macOS (aarch64), however, AppleClang does not recognize
+       * the assembly code `=w`, so we fallback to normal ways.
+       */
+#if defined(__APPLE__) || defined(__OSX__)
+        auto [x0, x1] = into_poly64pair();
+        auto [c0, c1] = coeff.into_poly64pair();
+        auto h = SIMD::from_mul(c0, x0);
+        auto l = SIMD::from_mul(c1, x1);
+#else
         SIMD h(0, 0), l(0, 0);
         asm(
                 "pmull %0.1q, %2.1d, %3.1d\n"
@@ -80,6 +87,7 @@ namespace crc64 {
         : "=&w"(l), "=w"(h)
         : "w"(*this), "w"(coeff)
         );
+#endif
         return h.bitxor(l);
     }
 
