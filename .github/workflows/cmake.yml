@@ -52,8 +52,9 @@ jobs:
         install: |
           dnf install -y gcc gcc-g++ cmake ninja-build gtest gtest-devel google-benchmark-devel
         run: |
-          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} -GNinja -DCRC64_ENABLE_TESTS=OFF -DCRC64_ENABLE_BENCHES=OFF
+          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} -GNinja -DCRC64_ENABLE_TESTS=ON -DCRC64_ENABLE_BENCHES=OFF
           cmake --build ${{github.workspace}}/build --config ${{matrix.BUILD_TYPE}}
+          ${{github.workspace}}/build/crc64-test
 
   build-amd64:
     runs-on: ubuntu-latest
